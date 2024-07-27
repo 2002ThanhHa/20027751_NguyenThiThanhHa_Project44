@@ -1,0 +1,72 @@
+CREATE DATABASE AudioEquipmentStore;
+use AudioEquipmentStore;
+
+CREATE TABLE Users (
+    UserID INT AUTO_INCREMENT PRIMARY KEY,
+    Username VARCHAR(50) NOT NULL UNIQUE,
+    Password VARCHAR(255) NOT NULL,
+    Email VARCHAR(100) NOT NULL UNIQUE,
+    Address VARCHAR(255)
+);
+
+CREATE TABLE Admins (
+    AdminID INT AUTO_INCREMENT PRIMARY KEY,
+    Username VARCHAR(50) NOT NULL UNIQUE,
+    Password VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE Categories (
+    CategoryID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Products (
+    ProductID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Description TEXT,
+    Price DECIMAL(18,2) NOT NULL,
+    Stock INT NOT NULL,
+    CategoryID INT,
+    ImageUrl VARCHAR(255),
+    FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
+);
+
+CREATE TABLE CartItems (
+    CartItemID INT AUTO_INCREMENT PRIMARY KEY,
+    ProductID INT NOT NULL,
+    UserID INT NOT NULL,
+    Quantity INT NOT NULL,
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID),
+    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+);
+
+CREATE TABLE Orders (
+    OrderID INT AUTO_INCREMENT PRIMARY KEY,
+    UserID INT NOT NULL,
+    OrderDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    TotalAmount DECIMAL(18,2) NOT NULL,
+    Status VARCHAR(50) NOT NULL,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+);
+
+CREATE TABLE OrderItems (
+    OrderItemID INT AUTO_INCREMENT PRIMARY KEY,
+    OrderID INT NOT NULL,
+    ProductID INT NOT NULL,
+    Quantity INT NOT NULL,
+    Price DECIMAL(18,2) NOT NULL,
+    FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+);
+
+CREATE TABLE Reviews (
+    ReviewID INT AUTO_INCREMENT PRIMARY KEY,
+    ProductID INT NOT NULL,
+    UserID INT NOT NULL,
+    Rating INT NOT NULL CHECK (Rating >= 1 AND Rating <= 5),
+    Comment TEXT,
+    ReviewDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID),
+    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+);
+
